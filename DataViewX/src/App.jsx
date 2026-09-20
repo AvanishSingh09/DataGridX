@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Papa from 'papaparse';
-import { Table, AlertCircle, Loader2 } from 'lucide-react';
+import { Table, AlertCircle, Loader2, Sun, Moon } from 'lucide-react';
 import FileUpload from './components/FileUpload';
 import Toolbar from './components/Toolbar';
 import FilterPanel from './components/FilterPanel';
@@ -10,6 +10,23 @@ import AnalyticsDashboard from './components/AnalyticsDashboard';
 import './App.css';
 
 export default function App() {
+  // Theme state with localStorage persistence
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('dataviewx_theme');
+    if (saved !== null) {
+      return saved === 'dark';
+    }
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  const toggleDarkMode = () => {
+    setDarkMode((prev) => {
+      const next = !prev;
+      localStorage.setItem('dataviewx_theme', next ? 'dark' : 'light');
+      return next;
+    });
+  };
+
   // Main application state
   const [data, setData] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -233,16 +250,29 @@ export default function App() {
     (globalSearch && globalSearch.trim() !== '');
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${darkMode ? 'dark-theme' : ''}`} data-theme={darkMode ? 'dark' : 'light'}>
       <header className="app-header">
-        <div className="header-brand">
-          <div className="brand-icon-wrapper">
-            <Table size={26} className="brand-icon" />
+        <div className="header-inner">
+          <div className="header-brand">
+            <div className="brand-icon-wrapper">
+              <Table size={26} className="brand-icon" />
+            </div>
+            <div className="brand-text">
+              <h1 className="app-title">DATAVIEWX</h1>
+              <p className="app-subtitle">Fast in-browser CSV analytics, dynamic charts & data grid</p>
+            </div>
           </div>
-          <div className="brand-text">
-            <h1 className="app-title">DATAVIEWX</h1>
-            <p className="app-subtitle">Fast in-browser CSV analytics, dynamic charts & data grid</p>
-          </div>
+
+          <button
+            type="button"
+            className="btn-theme-toggle"
+            onClick={toggleDarkMode}
+            title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            aria-label="Toggle theme"
+          >
+            {darkMode ? <Sun size={17} className="theme-icon sun" /> : <Moon size={17} className="theme-icon moon" />}
+            <span className="theme-toggle-text">{darkMode ? 'Light' : 'Dark'}</span>
+          </button>
         </div>
       </header>
 
@@ -333,6 +363,7 @@ export default function App() {
                 data={sortedData}
                 totalRawCount={data.length}
                 columns={columns}
+                darkMode={darkMode}
               />
             )}
           </div>

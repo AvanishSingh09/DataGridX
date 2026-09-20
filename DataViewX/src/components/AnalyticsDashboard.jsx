@@ -37,7 +37,8 @@ const CHART_COLORS = [
 export default function AnalyticsDashboard({
   data,
   totalRawCount,
-  columns
+  columns,
+  darkMode = false
 }) {
   // Detect column types
   const columnTypes = useMemo(() => {
@@ -83,6 +84,9 @@ export default function AnalyticsDashboard({
     if (!selectedCategoryCol) return [];
     return getCategoryCounts(data, selectedCategoryCol, 6);
   }, [data, selectedCategoryCol]);
+
+  const gridColor = darkMode ? '#334155' : '#e2e8f0';
+  const axisColor = darkMode ? '#94a3b8' : '#64748b';
 
   if (!data || data.length === 0) {
     return (
@@ -198,18 +202,18 @@ export default function AnalyticsDashboard({
           <ResponsiveContainer width="100%" height={320}>
             {chartType === 'bar' ? (
               <BarChart data={customChartData} margin={{ top: 15, right: 20, left: 10, bottom: 25 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
                 <XAxis
                   dataKey="name"
-                  stroke="#64748b"
+                  stroke={axisColor}
                   fontSize={12}
                   tickLine={false}
                   interval={0}
                   angle={-15}
                   textAnchor="end"
                 />
-                <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                <Tooltip content={<CustomTooltip />} />
+                <YAxis stroke={axisColor} fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip content={<CustomTooltip darkMode={darkMode} />} />
                 <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                   {customChartData.map((_, index) => (
                     <Cell
@@ -227,17 +231,17 @@ export default function AnalyticsDashboard({
                     <stop offset="95%" stopColor="#4f46e5" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
                 <XAxis
                   dataKey="name"
-                  stroke="#64748b"
+                  stroke={axisColor}
                   fontSize={12}
                   tickLine={false}
                   angle={-15}
                   textAnchor="end"
                 />
-                <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                <Tooltip content={<CustomTooltip />} />
+                <YAxis stroke={axisColor} fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip content={<CustomTooltip darkMode={darkMode} />} />
                 <Area
                   type="monotone"
                   dataKey="value"
@@ -266,7 +270,7 @@ export default function AnalyticsDashboard({
                     />
                   ))}
                 </Pie>
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip content={<CustomTooltip darkMode={darkMode} />} />
                 <Legend verticalAlign="bottom" height={36} iconType="circle" />
               </PieChart>
             )}
@@ -301,7 +305,7 @@ export default function AnalyticsDashboard({
                     />
                   ))}
                 </Pie>
-                <Tooltip content={<CustomTooltip unit="rows" />} />
+                <Tooltip content={<CustomTooltip darkMode={darkMode} unit="rows" />} />
                 <Legend verticalAlign="bottom" height={36} iconType="circle" />
               </PieChart>
             </ResponsiveContainer>
@@ -344,11 +348,11 @@ export default function AnalyticsDashboard({
 }
 
 // Custom Tooltip component for Recharts
-function CustomTooltip({ active, payload, label, unit }) {
+function CustomTooltip({ active, payload, label, unit, darkMode }) {
   if (active && payload && payload.length) {
     const data = payload[0];
     return (
-      <div className="custom-chart-tooltip">
+      <div className={`custom-chart-tooltip ${darkMode ? 'tooltip-dark' : ''}`}>
         <div className="tooltip-label">{data.payload?.name || label}</div>
         <div className="tooltip-value">
           <span className="tooltip-dot" style={{ backgroundColor: data.fill || '#4f46e5' }} />
