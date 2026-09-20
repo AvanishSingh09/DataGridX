@@ -1,6 +1,6 @@
-# CSV Data Viewer
+# CSV Data Viewer & Visual Analytics Studio
 
-A React web application built with Vite and Papa Parse to view, filter, sort, paginate, and export CSV files directly in the browser with no backend required.
+A modern, fast React web application built with Vite, Papa Parse, and Recharts to view, filter, sort, paginate, visually analyze, and export CSV files directly in the browser with no backend required.
 
 ---
 
@@ -8,14 +8,18 @@ A React web application built with Vite and Papa Parse to view, filter, sort, pa
 
 - **Drag & Drop / File Upload**: Upload CSV files easily via drag-and-drop or file picker with `.csv` validation.
 - **Client-Side Parsing**: Reads and parses CSV files locally in the browser using Papa Parse.
-- **Automatic Column Detection**: Dynamically inspects CSV headers and adjusts table columns automatically.
+- **Automatic Column & Type Detection**: Dynamically inspects CSV headers and auto-detects Numeric, Date, and Categorical column types.
+- **Visual Analytics Dashboard (Recharts)**:
+  - **KPI Metric Cards**: Real-time count, primary numeric averages, min/max ranges, dominant categories, and data health scores.
+  - **Interactive Chart Visualizer**: Switch between Bar, Area, and Donut/Pie charts with custom X-Axis, Y-Axis, and aggregation calculations (Average, Sum, Count).
+  - **Distribution Breakdown**: Visual frequency charts and rank bars that update in real-time as filters change.
 - **Multi-Column Filtering**: Filter rows across multiple columns simultaneously with case-insensitive `AND` logic.
 - **Global Search**: Search across all columns from a single search box.
 - **Sortable Columns**: Click table headers to sort ascending/descending, with automatic detection of numeric vs string columns.
 - **Pagination**: Paginate data with configurable rows per page (10, 25, 50, 100) and previous/next navigation.
 - **CSV Export**: Export the active filtered and sorted dataset back to a downloadable `.csv` file.
 - **Error & Empty State Handling**: User-friendly alerts for non-CSV files, empty datasets, parsing issues, and zero matching filter results.
-- **Responsive Layout**: Designed with clean CSS, including horizontal scroll for wide tables and mobile-friendly stacking.
+- **Responsive Layout**: Designed with clean CSS, including horizontal scroll for wide tables, responsive chart grids, and mobile-friendly stacking.
 
 ---
 
@@ -29,16 +33,21 @@ csv-data-viewer/
 │
 ├── src/
 │   ├── components/
-│   │   ├── FileUpload.jsx      # Handles drag & drop, file selection, and extension validation
-│   │   ├── Toolbar.jsx         # Shows file info, record counts, and export button
-│   │   ├── FilterPanel.jsx     # Dynamic inputs for column filters and global search
-│   │   ├── DataTable.jsx       # Dynamic table with sortable column headers
-│   │   └── Pagination.jsx      # Rows per page selector and page navigation
+│   │   ├── FileUpload.jsx          # Drag & drop, file selection & validation
+│   │   ├── Toolbar.jsx             # File stats, View Switcher & export actions
+│   │   ├── FilterPanel.jsx         # Dynamic column filters & global search
+│   │   ├── DataTable.jsx           # Dynamic sortable table with numeric awareness
+│   │   ├── Pagination.jsx          # Rows per page selector & navigation
+│   │   ├── MetricCards.jsx         # KPI summary cards (Avg, Min, Max, Completeness)
+│   │   └── AnalyticsDashboard.jsx  # Interactive dynamic charts with Recharts
 │   │
-│   ├── App.jsx                 # Main component managing state, parsing, and data flow
-│   ├── App.css                 # Component and layout styling
-│   ├── index.css               # Global CSS resets
-│   └── main.jsx                # React root render
+│   ├── utils/
+│   │   └── dataAnalyzer.js         # Column type detection & statistical aggregation
+│   │
+│   ├── App.jsx                     # Main state orchestrator & data flow pipeline
+│   ├── App.css                     # Component & responsive dashboard styling
+│   ├── index.css                   # Global CSS resets
+│   └── main.jsx                    # React root entry
 │
 ├── package.json
 ├── index.html
@@ -51,8 +60,9 @@ csv-data-viewer/
 
 - **React** (v19)
 - **Vite**
-- **Papa Parse** (for CSV parsing & unparsing)
-- **Lucide React** (icons)
+- **Papa Parse** (CSV parsing & unparsing)
+- **Recharts** (Interactive data visualization)
+- **Lucide React** (Icons)
 - **CSS3** (Flexbox, Grid, CSS Variables)
 
 ---
@@ -83,14 +93,15 @@ npm run build
 
 ## How to Test
 
-You can test the application using the included sample file or any custom `.csv` file:
-
-1. **Upload**: Drag and drop a CSV file (e.g. `students.csv`) or click **"Load Sample Dataset"**.
-2. **Filter by Column**: Type `Delhi` in the City filter input. Only matching rows will appear.
-3. **Multi-Column Filter**: Keep `City = Delhi` and enter `Course = CSE`. The table displays only rows matching both conditions.
-4. **Case Insensitive**: Try typing `delhi` or `DELHI` — filtering works regardless of letter case.
-5. **Clear Filters**: Click **"Clear Filters"** to restore all records.
-6. **Sorting**: Click the **Age** header once to sort ascending (20, 21, 22...), click again for descending.
-7. **Pagination**: Change rows per page (e.g. from 25 to 10) and navigate between pages.
-8. **Export**: Click **"Export Filtered CSV"** to download only the currently filtered rows.
-9. **Invalid File Test**: Try uploading a `.txt` file to verify the validation message (`Please upload a CSV file.`).
+1. **Upload & Switch Views**:
+   - Drag & drop `students.csv` or click **"Load Sample Dataset"**.
+   - Use the **[ 📄 Table View ]** and **[ 📊 Visual Analytics ]** buttons in the toolbar to switch views.
+2. **Interactive Chart Visualizer**:
+   - In **Visual Analytics**, change Group By (X-Axis) between `Course`, `City`, and `Name`.
+   - Change Value (Y-Axis) to `Score` and switch calculation between `Average` and `Total Sum`.
+   - Toggle chart styles: **Bar**, **Area**, and **Donut**.
+3. **Reactive Filter Sync**:
+   - Type `Delhi` in the City filter.
+   - Switch to **Visual Analytics** $\rightarrow$ charts instantly reflect *only* Delhi records!
+4. **Sort, Paginate & Export**:
+   - Sort columns, change rows per page, and click **"Export Filtered CSV"** to download the active dataset.

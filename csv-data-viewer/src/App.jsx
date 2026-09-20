@@ -6,6 +6,7 @@ import Toolbar from './components/Toolbar';
 import FilterPanel from './components/FilterPanel';
 import DataTable from './components/DataTable';
 import Pagination from './components/Pagination';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
 import './App.css';
 
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
   const [fileName, setFileName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [activeView, setActiveView] = useState('table'); // 'table' | 'analytics'
 
   // Handle uploaded or selected CSV file
   const handleFile = (file) => {
@@ -63,6 +65,7 @@ export default function App() {
         setGlobalSearch('');
         setSortConfig(null);
         setCurrentPage(1);
+        setActiveView('table');
         setError('');
       },
       error: (err) => {
@@ -221,6 +224,7 @@ export default function App() {
     setSortConfig(null);
     setCurrentPage(1);
     setFileName('');
+    setActiveView('table');
     setError('');
   };
 
@@ -278,7 +282,7 @@ export default function App() {
           </section>
         )}
 
-        {/* Data table view */}
+        {/* Data table / analytics view */}
         {!loading && data.length > 0 && (
           <div className="data-view-container">
             <Toolbar
@@ -286,6 +290,8 @@ export default function App() {
               totalRecords={data.length}
               totalColumns={columns.length}
               filteredRecords={sortedData.length}
+              activeView={activeView}
+              onViewChange={setActiveView}
               onExport={handleExport}
               onReset={handleReset}
             />
@@ -299,25 +305,36 @@ export default function App() {
               onGlobalSearchChange={handleGlobalSearchChange}
             />
 
-            <DataTable
-              columns={columns}
-              data={pageData}
-              sortConfig={sortConfig}
-              onSort={handleSort}
-              startIndex={startIndex}
-              hasFilters={hasActiveFilters}
-              onClearFilters={handleClearFilters}
-            />
+            {/* View Switcher: Table View vs Visual Analytics */}
+            {activeView === 'table' ? (
+              <>
+                <DataTable
+                  columns={columns}
+                  data={pageData}
+                  sortConfig={sortConfig}
+                  onSort={handleSort}
+                  startIndex={startIndex}
+                  hasFilters={hasActiveFilters}
+                  onClearFilters={handleClearFilters}
+                />
 
-            <Pagination
-              currentPage={safeCurrentPage}
-              totalPages={totalPages}
-              rowsPerPage={rowsPerPage}
-              totalRecords={data.length}
-              filteredRecordsCount={sortedData.length}
-              onPageChange={(p) => setCurrentPage(p)}
-              onRowsPerPageChange={handleRowsPerPageChange}
-            />
+                <Pagination
+                  currentPage={safeCurrentPage}
+                  totalPages={totalPages}
+                  rowsPerPage={rowsPerPage}
+                  totalRecords={data.length}
+                  filteredRecordsCount={sortedData.length}
+                  onPageChange={(p) => setCurrentPage(p)}
+                  onRowsPerPageChange={handleRowsPerPageChange}
+                />
+              </>
+            ) : (
+              <AnalyticsDashboard
+                data={sortedData}
+                totalRawCount={data.length}
+                columns={columns}
+              />
+            )}
           </div>
         )}
       </main>

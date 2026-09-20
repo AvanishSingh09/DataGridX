@@ -1,10 +1,12 @@
-import { Download, FileText, Database, Columns, RotateCcw } from 'lucide-react';
+import { Download, FileText, Database, Columns, RotateCcw, Table, BarChart3 } from 'lucide-react';
 
 export default function Toolbar({
   fileName,
   totalRecords,
   totalColumns,
   filteredRecords,
+  activeView,
+  onViewChange,
   onExport,
   onReset
 }) {
@@ -42,6 +44,32 @@ export default function Toolbar({
               </span>
             </div>
           )}
+        </div>
+      </div>
+
+      <div className="toolbar-center">
+        {/* View Switcher Tabs */}
+        <div className="view-switcher-tabs" role="tablist">
+          <button
+            type="button"
+            className={`tab-btn ${activeView === 'table' ? 'active' : ''}`}
+            onClick={() => onViewChange('table')}
+            role="tab"
+            aria-selected={activeView === 'table'}
+          >
+            <Table size={15} />
+            <span>Table View</span>
+          </button>
+          <button
+            type="button"
+            className={`tab-btn ${activeView === 'analytics' ? 'active' : ''}`}
+            onClick={() => onViewChange('analytics')}
+            role="tab"
+            aria-selected={activeView === 'analytics'}
+          >
+            <BarChart3 size={15} />
+            <span>Visual Analytics</span>
+          </button>
         </div>
       </div>
 
