@@ -1,8 +1,8 @@
 {
-  "name": "csv-data-viewer",
+  "name": "dataviewx",
   "private": true,
   "version": "1.0.0",
-  "description": "React application to view, search, filter, sort, paginate and export CSV datasets in browser",
+  "description": "DataViewX - Modern in-browser CSV analytics, dynamic chart visualizer, and data grid",
   "type": "module",
   "scripts": {
     "dev": "vite",

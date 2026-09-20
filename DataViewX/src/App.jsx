@@ -240,8 +240,8 @@ export default function App() {
             <Table size={26} className="brand-icon" />
           </div>
           <div className="brand-text">
-            <h1 className="app-title">CSV DATA VIEWER</h1>
-            <p className="app-subtitle">Upload, filter, sort and export CSV data in your browser</p>
+            <h1 className="app-title">DATAVIEWX</h1>
+            <p className="app-subtitle">Fast in-browser CSV analytics, dynamic charts & data grid</p>
           </div>
         </div>
       </header>
@@ -340,7 +340,7 @@ export default function App() {
       </main>
 
       <footer className="app-footer">
-        <p>CSV Data Viewer &bull; Built with React & Vite</p>
+        <p>DataViewX &bull; Fast in-browser CSV analytics & data explorer</p>
       </footer>
     </div>
   );
