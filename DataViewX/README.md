@@ -1,10 +1,21 @@
 # DataViewX 📊
 
-A high-performance in-browser CSV data workbench, dynamic chart visualizer, and grid analytics suite built with React, Vite, Papa Parse, and Recharts.
+[![Live Demo](https://img.shields.io/badge/Live_Demo-data--grid--x.vercel.app-4f46e5?style=for-the-badge&logo=vercel&logoColor=white)](https://data-grid-x.vercel.app/)
+[![React 19](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Vite 6](https://img.shields.io/badge/Vite-6.1-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Recharts](https://img.shields.io/badge/Recharts-3.10-22c55e?style=for-the-badge&logo=chartdotjs&logoColor=white)](https://recharts.org/)
+
+> **A high-performance in-browser CSV data workbench, dynamic chart visualizer, and grid analytics suite built with React, Vite, Papa Parse, and Recharts.**
 
 ---
 
-## 🚀 Features
+## 🌐 Live Application
+
+🚀 **Live Deployment:** **[https://data-grid-x.vercel.app/](https://data-grid-x.vercel.app/)**
+
+---
+
+## 🚀 Key Features
 
 - **📁 Drag & Drop / File Upload**: Upload CSV files effortlessly with `.csv` extension validation.
 - **⚡ Client-Side Processing**: 100% in-browser processing via Papa Parse with zero backend overhead.
@@ -17,6 +28,7 @@ A high-performance in-browser CSV data workbench, dynamic chart visualizer, and 
 - **🔢 Numeric & String Sorting**: Click column headers to toggle ascending/descending with intelligent numeric vs text collation.
 - **📄 Pagination**: Configurable rows per page (`10`, `25`, `50`, `100`), boundary-disabled controls, and result counters.
 - **💾 Filtered CSV Export**: Download the active filtered/sorted dataset directly back to a CSV file.
+- **🌓 Dark & Light Theme Modes**: Persistent theme switching saved in `localStorage` with system preference detection.
 - **📱 Responsive Design**: Modern UI with horizontal scroll for wide tables and mobile-friendly stacking.
 
 ---
