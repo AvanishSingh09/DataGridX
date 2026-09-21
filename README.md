@@ -1,156 +1,155 @@
-# DataViewX 📊
+# 📊 DataViewX
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-data--grid--x.vercel.app-4f46e5?style=for-the-badge&logo=vercel&logoColor=white)](https://data-grid-x.vercel.app/)
-[![React 19](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![Vite 6](https://img.shields.io/badge/Vite-6.1-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Recharts](https://img.shields.io/badge/Recharts-3.10-22c55e?style=for-the-badge&logo=chartdotjs&logoColor=white)](https://recharts.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-f59e0b?style=for-the-badge)](LICENSE)
+<p align="center">
+  <a href="https://data-grid-x.vercel.app/">
+    <img src="https://img.shields.io/badge/🚀_Live_Demo-data--grid--x.vercel.app-4f46e5?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+  </a>
+  <img src="https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19" />
+  <img src="https://img.shields.io/badge/Vite-6.1-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 6" />
+  <img src="https://img.shields.io/badge/Recharts-3.10-22c55e?style=for-the-badge&logo=chartdotjs&logoColor=white" alt="Recharts" />
+  <img src="https://img.shields.io/badge/License-MIT-f59e0b?style=for-the-badge" alt="MIT License" />
+</p>
 
-> **High-performance client-side in-browser CSV analytics, dynamic chart visualizer, and interactive data grid suite.**  
-> Built with **React 19**, **Vite**, **Papa Parse**, and **Recharts**. Zero backend required.
+<p align="center">
+  <b>Modern In-Browser CSV Analytics, Multi-Column Data Grid & Real-Time Visualization Dashboard</b><br />
+  <i>100% Client-Side • Zero Backend • Complete Data Privacy • Sub-Millisecond Speed</i>
+</p>
 
----
-
-## 🌐 Live Demo
-
-🚀 **Try the live app:** **[https://data-grid-x.vercel.app/](https://data-grid-x.vercel.app/)**
+<p align="center">
+  <a href="https://data-grid-x.vercel.app/"><strong>🌐 Open Live Demo on Vercel »</strong></a>
+</p>
 
 ---
 
 ## 🌟 Overview
 
-**DataViewX** is a modern, responsive data exploration workbench designed to parse, inspect, filter, sort, paginate, visually analyze, and export complex CSV datasets entirely inside the browser. It features automatic column and data-type discovery, multi-condition filtering, real-time KPI metric summaries, interactive charts, and persistent dark/light theme switching.
+**DataViewX** is a fast, responsive, and privacy-first CSV data analysis and visualization tool built with **React 19** and **Vite**. 
 
-This repository includes two standalone editions:
-1. **`DataViewX/`** — Flagship edition featuring interactive Recharts visualization dashboards, KPI metric cards, and dark/light theme switching.
-2. **`csv-data-viewer-basic/`** — Clean baseline MVP edition focused purely on core table grid operations.
+Unlike conventional tools that upload sensitive spreadsheets to external servers, **DataViewX processes 100% of your data client-side in the browser**. Your files never leave your device.
 
----
-
-## 🚀 Key Features
-
-### 📁 1. Seamless CSV Ingestion
-- **Drag & Drop / File Browser:** Upload any CSV file effortlessly with instant visual feedback.
-- **Client-Side Parsing:** Powered by [Papa Parse](https://www.papaparse.com/) with automatic delimiter detection and empty line skipping.
-- **One-Click Sample Loader:** Test immediately with bundled sample datasets (e.g. `students.csv`).
-- **Strict File Validation:** Rejects non-CSV formats and provides helpful error alerts for empty or corrupted files.
-
-### 🔍 2. Dynamic Schema & Type Discovery
-- Automatically extracts column names from CSV headers with no predefined schema.
-- Automatic data type inference: classifies columns as **Numeric**, **Categorical**, or **Date**.
-
-### 🎯 3. Multi-Column Filtering & Global Search
-- **Individual Column Filters:** Dynamically generated input for every detected column.
-- **AND Logic (`Array.prototype.every`):** Multiple filters evaluate simultaneously with case-insensitive matching (`.toLowerCase()`).
-- **Global Search:** Search across all columns simultaneously from a single unified input.
-- **Smart Boundary Reset:** Automatically resets pagination to Page 1 when filter conditions change.
-
-### 📊 4. Visual Analytics Dashboard (Recharts)
-- **View Switcher:** One-click toggle between **`[ 📄 Table View ]`** and **`[ 📊 Visual Analytics ]`**.
-- **Interactive Chart Builder:** Dynamically select:
-  - **Group By (X-Axis):** Any categorical or date column.
-  - **Value (Y-Axis):** Any numeric column or raw record frequency.
-  - **Calculation Mode:** `Average (Mean)`, `Total Sum`, or `Count`.
-  - **Chart Types:** **Bar Chart**, **Area Trend Chart**, and **Donut / Pie Chart**.
-- **Real-Time Reactive Sync:** When filters change in the filter panel, all charts and metrics **instantly re-render** with the filtered subset.
-
-### 📈 5. KPI Summary Metric Cards
-- **Active Records:** Matching record count and percentage of the total file.
-- **Primary Numeric KPI:** Automatic average, minimum, and maximum calculation for key numeric fields.
-- **Dominant Category:** Identifies the top category value and its percentage share.
-- **Data Quality Score:** Real-time percentage of filled cells vs total dataset capacity.
-
-### 🔢 6. Intelligent Column Sorting
-- Click any column header to toggle: `Ascending (↑)` $\rightarrow$ `Descending (↓)` $\rightarrow$ `Default`.
-- **Numeric vs Text Aware:** Detects numeric strings (`"100"`, `"20"`) and sorts them numerically (`20` < `100`), with natural alphanumeric string collation fallback.
-
-### 📄 7. Configurable Pagination
-- Configurable rows per page (`10`, `25`, `50`, `100`).
-- Boundary-aware navigation: `First`, `Previous`, `Next`, `Last`, and numbered page pills with smart ellipsis.
-- Informative counters: `Showing 1–25 of 147 records (filtered from 500 total)`.
-
-### 💾 8. In-Browser CSV Export
-- Converts active filtered and sorted data back into CSV format using `Papa.unparse()`.
-- Generates an instant browser download via client-side `Blob` and `URL.createObjectURL` APIs.
-
-### 🌓 9. Dark & Light Theme Modes
-- Persistent theme toggle with stored preference in `localStorage`.
-- Automatic detection of system OS color scheme (`prefers-color-scheme`).
-- High-contrast slate color palette with customized chart grid lines and tooltips.
+Whether you are exploring sales figures, student records, logs, or sensor metrics, DataViewX provides instant multi-column filtering, numeric sorting, real-time KPI metrics, dynamic chart generation (Bar, Area, Donut), and filtered CSV export.
 
 ---
 
-## 🏗️ Architecture & Data Pipeline
+## 🚀 Live Demo
 
-```
-                                [ CSV File / Drag & Drop ]
-                                            │
-                                            ▼
-                                   [ HTML5 File API ]
-                                            │
-                                            ▼
-                               [ Papa Parse (Client-Side) ]
-                                            │
-                                            ▼
-                              Raw Data Array & Columns
-                                            │
-                                            ▼
-                       ┌────────────────────────────────────────┐
-                       │            App.jsx (State)             │
-                       │  - data            - sortConfig        │
-                       │  - columns         - currentPage       │
-                       │  - filters         - rowsPerPage       │
-                       │  - globalSearch    - activeView        │
-                       └────────────────────┬───────────────────┘
-                                            │
-                                            ▼
-                            1. Filter (`useMemo` + `every`)
-                                            │
-                                            ▼
-                            2. Sort (`useMemo` + `Number/locale`)
-                                            │
-                                            ▼
-                            3. Paginate (`slice(start, end)`)
-                                            │
-                  ┌─────────────────────────┴─────────────────────────┐
-                  ▼                                                   ▼
-       [ 📄 Table View ]                                    [ 📊 Visual Analytics ]
-  ├── DataTable.jsx                                    ├── MetricCards.jsx (KPIs)
-  └── Pagination.jsx                                   └── AnalyticsDashboard.jsx
-                                                           ├── Dynamic Recharts Builder
-                                                           └── Category Distribution
+Experience DataViewX directly in your browser:
+
+👉 **[https://data-grid-x.vercel.app/](https://data-grid-x.vercel.app/)**
+
+*No installation, registration, or setup required. Drop any `.csv` or click **"Load Sample Dataset"** to start exploring.*
+
+---
+
+## 📸 Interface Preview
+
+```text
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📊 DATAVIEWX                              [ ☀️ Light ]  [ 📄 Grid ] [ 📊 Charts ] │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 📁 students.csv   •   500 records   •   6 columns   •   [ 💾 Export CSV ]        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 🔍 Filters [Clear]                                                          │
+│ Name: [___________]   City: [Delhi______]   Course: [CSE________]           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  #  │ Name      │ Age (↑) │ City      │ Course    │ Score   │ Date          │
+├─────┼───────────┼─────────┼───────────┼───────────┼─────────┼───────────────┤
+│  1  │ Aman      │ 21      │ Delhi     │ CSE       │ 88      │ 2023-08-15    │
+│  2  │ Avanish   │ 21      │ Delhi     │ CSE       │ 92      │ 2023-08-15    │
+│  3  │ Karan     │ 23      │ Delhi     │ CSE       │ 76      │ 2023-08-23    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Showing 1–3 of 3 matching records (filtered from 500 total)  •  Rows: [25 ▼]│
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 📂 Repository Structure
+## ✨ Key Features
 
+- 🔒 **100% Private & Client-Side:** All parsing, filtering, aggregation, and rendering run locally using Web APIs. Zero network requests with your data.
+- 📁 **Drag & Drop Upload:** Drop any `.csv` file or click to browse. Includes built-in file validation and instant sample dataset loader.
+- 🧠 **Smart Schema Discovery:** Automatically extracts headers and classifies columns as **Numeric**, **Categorical**, or **Date**.
+- 🎯 **Multi-Column AND Filtering:** Filter across multiple columns at the same time with case-insensitive sub-string matching.
+- 🔎 **Global Search:** Search through all columns simultaneously from a single unified input.
+- 🔢 **Numeric-Aware Sorting:** Click headers to cycle through Ascending $\rightarrow$ Descending $\rightarrow$ Default. Correctly handles numbers (`20` < `100`).
+- 📊 **Interactive Recharts Dashboard:**
+  - **Bar Charts:** Compare metrics across categories.
+  - **Area Trend Charts:** Visualize temporal or sequential data progression.
+  - **Donut / Pie Charts:** Inspect categorical distributions and market shares.
+  - **Dynamic Axes & Modes:** Switch X-axis, Y-axis, and calculation modes (Average, Sum, Count) on the fly.
+- 📈 **Real-Time KPI Metric Cards:** Instant cards for Total Records, Primary Average, Min / Max range, Dominant Category, and Data Completeness.
+- 📄 **Configurable Pagination:** Select rows per page (`10`, `25`, `50`, `100`), jump between pages, and monitor live row counters.
+- 💾 **Filtered CSV Export:** Export the actively filtered/sorted dataset back to a clean `.csv` file via HTML5 Blob API.
+- 🌓 **Theme Switcher:** Seamless Dark & Light mode toggle with `localStorage` memory and OS system preference detection.
+
+---
+
+## 🏗️ Architecture & Data Flow
+
+```text
+                     [ User Drops CSV File ]
+                                │
+                                ▼
+                    [ HTML5 File & FileReader ]
+                                │
+                                ▼
+                   [ Papa Parse Client Engine ]
+                                │
+                                ▼
+                  State Store (App.jsx Container)
+                                │
+        ┌───────────────────────┴───────────────────────┐
+        ▼                                               ▼
+ 1. Multi-Filter Engine                         2. Sorting Engine
+ • Multi-column AND logic                       • Number() numeric detection
+ • Case-insensitive sub-string                  • localeCompare string fallback
+ • useMemo optimization                         • 3-state toggle (asc/desc/none)
+        │                                               │
+        └───────────────────────┬───────────────────────┘
+                                │
+                                ▼
+                    3. Pagination & Slicing
+                    • (page - 1) * rowsPerPage
+                    • Auto-resets on filter change
+                                │
+                ┌───────────────┴───────────────┐
+                ▼                               ▼
+      [ 📄 Data Grid View ]           [ 📊 Visual Analytics ]
+      • Responsive scroll wrapper     • Dynamic Recharts builder
+      • Sort indicators & badges      • KPI metric summary cards
+      • Empty & error states          • Real-time reactive sync
 ```
+
+---
+
+## 📁 Repository Structure
+
+```text
 task_internship/
 │
-├── DataViewX/                     # 📊 Advanced Analytics Edition (Flagship)
+├── 📊 DataViewX/                    # Advanced Flagship Edition (Recharts + Dark Mode)
 │   ├── public/
-│   │   └── sample_students.csv    # Sample student dataset for testing
+│   │   └── sample_students.csv     # Bundled dataset for instant preview
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── AnalyticsDashboard.jsx  # Recharts visualizer (Bar, Area, Donut)
+│   │   │   ├── AnalyticsDashboard.jsx  # Interactive Recharts visualizer (Bar, Area, Donut)
 │   │   │   ├── MetricCards.jsx         # Summary KPI cards (Avg, Min, Max, Completeness)
 │   │   │   ├── DataTable.jsx           # Dynamic sortable table grid
 │   │   │   ├── FileUpload.jsx          # Drag & drop upload & validation
 │   │   │   ├── FilterPanel.jsx         # Dynamic column filters & global search
-│   │   │   ├── Pagination.jsx          # Rows per page & navigation
+│   │   │   ├── Pagination.jsx          # Rows per page selector & navigation
 │   │   │   └── Toolbar.jsx             # File metadata & view switcher tabs
 │   │   ├── utils/
 │   │   │   └── dataAnalyzer.js         # Type discovery & statistical aggregations
 │   │   ├── App.jsx                     # Core state & data flow orchestrator
 │   │   ├── App.css                     # Complete light/dark design system
 │   │   ├── index.css                   # Global CSS resets
-│   │   └── main.jsx                    # React root entry
+│   │   └── main.jsx                    # React entry point
 │   ├── package.json
 │   ├── index.html
 │   └── README.md
 │
-└── csv-data-viewer-basic/         # 🟢 Clean Baseline Edition (Minimal MVP)
+└── 🟢 csv-data-viewer-basic/       # Clean Baseline Edition (Minimal MVP)
     ├── src/
     │   ├── components/
     │   │   ├── FileUpload.jsx
@@ -159,10 +158,8 @@ task_internship/
     │   │   ├── DataTable.jsx
     │   │   └── Pagination.jsx
     │   ├── App.jsx
-    │   ├── App.css
-    │   └── main.jsx
+    │   └── App.css
     ├── package.json
-    ├── index.html
     └── README.md
 ```
 
@@ -173,62 +170,40 @@ task_internship/
 | Technology | Purpose |
 | :--- | :--- |
 | **React 19** | Component-based UI with modern hooks (`useState`, `useMemo`, `useRef`, `useEffect`) |
-| **Vite 6** | Ultra-fast build tool and development server with native ESM |
-| **Papa Parse** | Fast in-browser CSV parsing, schema extraction, and serialization |
+| **Vite 6** | Lightning-fast development server and optimized rollup production bundling |
+| **Papa Parse** | High-performance in-browser CSV parsing, schema extraction, and serialization |
 | **Recharts** | Composable, responsive SVG charts (Bar, Area, Pie/Donut) |
-| **Lucide React** | Clean, accessible iconography |
-| **CSS3** | CSS Variables, Flexbox, CSS Grid, and responsive media queries |
+| **Lucide React** | Modern, accessible iconography |
+| **CSS3 Design System** | Custom CSS variables, CSS Grid, Flexbox, and responsive dark/light themes |
 
 ---
 
-## 🏃 Getting Started
+## 🚀 Local Development Setup
 
-### Prerequisites
-- **Node.js** (v18 or newer)
-- **npm** (v9 or newer)
-
----
-
-### Running the Advanced Edition (`DataViewX`)
-
+### 1. Clone the repository
 ```bash
-# 1. Navigate into DataViewX
-cd DataViewX
-
-# 2. Install dependencies
-npm install
-
-# 3. Start local development server
-npm run dev
+git clone https://github.com/AvanishSingh09/DataGridX.git
+cd DataGridX
 ```
 
-Open `http://localhost:5173` in your browser.
+### 2. Run DataViewX (Advanced Flagship)
+```bash
+cd DataViewX
+npm install
+npm run dev
+```
+Open **`http://localhost:5173`** in your browser.
 
-To create an optimized production build:
+### 3. Build for Production
 ```bash
 npm run build
 ```
 
 ---
 
-### Running the Baseline Edition (`csv-data-viewer-basic`)
+## 🧪 Testing Checklist & Verification
 
-```bash
-# 1. Navigate into the baseline folder
-cd csv-data-viewer-basic
-
-# 2. Install dependencies
-npm install
-
-# 3. Start development server
-npm run dev
-```
-
----
-
-## 🧪 Testing Checklist
-
-Use the included sample dataset or your own custom CSV file to test all features:
+You can test all capabilities using the bundled sample data:
 
 ```csv
 Name,Age,City,Course,Score,Enrollment Date
@@ -239,25 +214,24 @@ Priya,20,Gurgaon,ECE,95,2023-08-18
 Rohan,23,Noida,CSE,78,2023-08-19
 ```
 
-| # | Test Scenario | Action | Expected Result |
-|---|:---|:---|:---|
-| 1 | **Upload CSV** | Drag & drop file or click **"Load Sample Dataset"** | Auto-detects 6 columns, displays 25 records, shows record counts. |
-| 2 | **Single Column Filter** | Enter `Delhi` in the City filter input | Table displays only Delhi records (`Avanish`, `Aman`, etc.). |
-| 3 | **Multi-Column Filter** | Enter `City = Delhi` AND `Course = CSE` | Matches rows satisfying **both** conditions (`AND` logic). |
-| 4 | **Case Insensitivity** | Enter `delhi`, `DELHI`, or `DeLhI` | Correctly matches `Delhi`. |
-| 5 | **Numeric Sorting** | Click the **Age** or **Score** column header | Sorts numbers correctly (`20, 21, 22, 23` rather than alphabetically). |
-| 6 | **Pagination Jump** | Change rows per page (`10` $\rightarrow$ `25`) | Result counter and page pill buttons update immediately. |
-| 7 | **Visual Analytics** | Click **`[ 📊 Visual Analytics ]`** | Renders KPI cards, distribution donut, and custom bar/area charts. |
-| 8 | **Interactive Visualizer** | Change Group By to `Course` and Value to `Score` | Chart plots average score per course. |
-| 9 | **Reactive Chart Sync** | Filter by `City = Delhi` and view charts | All charts update instantly with Delhi data only. |
-| 10 | **Theme Switcher** | Click Sun ☀️ / Moon 🌙 button | Smoothly switches between Dark and Light mode. |
-| 11 | **Export Filtered CSV** | Click **"Export Filtered CSV"** | Downloads a new `.csv` containing only active filtered rows. |
-| 12 | **Error Handling** | Upload a `.txt` or invalid file | Displays `"Please upload a CSV file."` alert banner. |
+- [x] **Upload Test:** Drop a CSV or click **"Load Sample Dataset"** $\rightarrow$ verifies column detection and row rendering.
+- [x] **Filter Test:** Type `Delhi` in City and `CSE` in Course $\rightarrow$ table displays only matching rows (AND logic).
+- [x] **Case-Insensitive Test:** Type `delhi` or `DELHI` $\rightarrow$ verifies case-insensitivity.
+- [x] **Sorting Test:** Click **Age** header $\rightarrow$ sorts numerically (`20`, `21`, `22`, `23`).
+- [x] **Visual Analytics Test:** Switch to **Visual Analytics** tab $\rightarrow$ inspect charts, KPI metric cards, and category breakdown.
+- [x] **Dynamic Axis Test:** Change Group By to `Course` and Value to `Score` $\rightarrow$ chart plots average score per course.
+- [x] **Theme Switcher Test:** Click the Sun/Moon button $\rightarrow$ verifies instant dark/light mode toggle with stored preference.
+- [x] **Export Test:** Click **"Export Filtered CSV"** $\rightarrow$ downloads only active filtered rows.
+- [x] **Error Handling Test:** Try uploading a `.txt` file $\rightarrow$ prompts `"Please upload a CSV file."`.
 
 ---
 
 ## 📄 License
 
-Distributed under the **MIT License**. Free for personal and commercial use.
+This project is open-source and licensed under the **MIT License**.
 
- 
+---
+
+<p align="center">
+  <sub>Developed by <b>Avanish Singh</b> • <a href="https://data-grid-x.vercel.app/">Live Demo</a></sub>
+</p>
