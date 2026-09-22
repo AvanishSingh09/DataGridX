@@ -1,23 +1,16 @@
 # 📊 DataViewX
 
-<p align="center">
-  <a href="https://data-grid-x.vercel.app/">
-    <img src="https://img.shields.io/badge/🚀_Live_Demo-data--grid--x.vercel.app-4f46e5?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
-  </a>
-  <img src="https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19" />
-  <img src="https://img.shields.io/badge/Vite-6.1-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 6" />
-  <img src="https://img.shields.io/badge/Recharts-3.10-22c55e?style=for-the-badge&logo=chartdotjs&logoColor=white" alt="Recharts" />
-  <img src="https://img.shields.io/badge/License-MIT-f59e0b?style=for-the-badge" alt="MIT License" />
-</p>
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-data--grid--x.vercel.app-4f46e5?style=for-the-badge&logo=vercel&logoColor=white)](https://data-grid-x.vercel.app/)
+[![React 19](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6.1-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Recharts](https://img.shields.io/badge/Recharts-3.10-22c55e?style=for-the-badge&logo=chartdotjs&logoColor=white)](https://recharts.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-f59e0b?style=for-the-badge)](LICENSE)
 
-<p align="center">
-  <b>Modern In-Browser CSV Analytics, Multi-Column Data Grid & Real-Time Visualization Dashboard</b><br />
-  <i>100% Client-Side • Zero Backend • Complete Data Privacy • Sub-Millisecond Speed</i>
-</p>
+**Modern In-Browser CSV Analytics, Multi-Column Data Grid & Real-Time Visualization Dashboard**
 
-<p align="center">
-  <a href="https://data-grid-x.vercel.app/"><strong>🌐 Open Live Demo on Vercel »</strong></a>
-</p>
+*100% Client-Side • Zero Backend • Complete Data Privacy • Sub-Millisecond Speed*
+
+🔗 **[Click Here to Open Live Demo (Vercel)](https://data-grid-x.vercel.app/)**
 
 ---
 
@@ -85,17 +78,21 @@ DataViewX/
 ## 🏃 Quick Start
 
 ### 1. Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### 2. Run Locally
+
 ```bash
 npm run dev
 ```
+
 Open **`http://localhost:5173`** in your browser.
 
 ### 3. Build for Production
+
 ```bash
 npm run build
 ```
@@ -106,8 +103,4 @@ npm run build
 
 Distributed under the **MIT License**. Free for personal and commercial use.
 
----
-
-<p align="center">
-  <sub>Developed by <b>Avanish Singh</b> • <a href="https://data-grid-x.vercel.app/">Live Demo</a></sub>
-</p>
+Developed by **Avanish Singh** • [Live Demo](https://data-grid-x.vercel.app/)
