@@ -51,6 +51,39 @@ export function parseDateValue(val) {
 }
 
 /**
+ * Get min and max date bounds from a date column
+ */
+export function getDateColumnBounds(data, column) {
+  if (!data || data.length === 0 || !column) return null;
+  let minDate = null;
+  let maxDate = null;
+
+  data.forEach((row) => {
+    const d = parseDateValue(row[column]);
+    if (d) {
+      if (!minDate || d < minDate) minDate = d;
+      if (!maxDate || d > maxDate) maxDate = d;
+    }
+  });
+
+  if (!minDate || !maxDate) return null;
+
+  const formatYMD = (date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  };
+
+  return {
+    minDateStr: formatYMD(minDate),
+    maxDateStr: formatYMD(maxDate),
+    minDate,
+    maxDate
+  };
+}
+
+/**
  * Detect column data type (numeric, date, or categorical)
  */
 export function detectColumnTypes(data, columns) {

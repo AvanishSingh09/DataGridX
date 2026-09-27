@@ -1,4 +1,6 @@
-import { Filter, X, Search, Calendar, CalendarRange, RotateCcw } from 'lucide-react';
+import { useMemo } from 'react';
+import { Filter, X, Search, CalendarRange, RotateCcw, CalendarDays } from 'lucide-react';
+import { getDateColumnBounds } from '../utils/dataAnalyzer';
 
 export default function FilterPanel({
   columns,
@@ -9,7 +11,8 @@ export default function FilterPanel({
   globalSearch,
   onGlobalSearchChange,
   dateRange = { column: '', startDate: '', endDate: '' },
-  onDateRangeChange
+  onDateRangeChange,
+  data = []
 }) {
   // Find detected date columns
   const dateColumns = columns.filter(
@@ -20,6 +23,13 @@ export default function FilterPanel({
 
   // Fallback to all columns if no date column explicitly detected
   const availableDateCols = dateColumns.length > 0 ? dateColumns : columns;
+  const activeDateCol = dateRange.column || availableDateCols[0] || '';
+
+  // Discover min/max date bounds for the selected date column in dataset
+  const dateBounds = useMemo(() => {
+    if (!data || data.length === 0 || !activeDateCol) return null;
+    return getDateColumnBounds(data, activeDateCol);
+  }, [data, activeDateCol]);
 
   const isDateRangeActive = Boolean(
     dateRange.column && (dateRange.startDate || dateRange.endDate)
@@ -36,6 +46,17 @@ export default function FilterPanel({
         ...dateRange,
         startDate: '',
         endDate: ''
+      });
+    }
+  };
+
+  const handleSetFullSpan = () => {
+    if (dateBounds && onDateRangeChange) {
+      onDateRangeChange({
+        ...dateRange,
+        column: activeDateCol,
+        startDate: dateBounds.minDateStr,
+        endDate: dateBounds.maxDateStr
       });
     }
   };
@@ -101,17 +122,31 @@ export default function FilterPanel({
                 <span className="date-active-pill">Active</span>
               )}
             </div>
-            {isDateRangeActive && (
-              <button
-                type="button"
-                className="btn-clear-date-range"
-                onClick={handleClearDateRange}
-                title="Reset date range"
-              >
-                <RotateCcw size={12} />
-                <span>Reset Dates</span>
-              </button>
-            )}
+
+            <div className="date-range-actions">
+              {dateBounds && (
+                <button
+                  type="button"
+                  className="btn-date-preset"
+                  onClick={handleSetFullSpan}
+                  title="Filter to entire span in dataset"
+                >
+                  <CalendarDays size={12} />
+                  <span>Full Range ({dateBounds.minDateStr} ~ {dateBounds.maxDateStr})</span>
+                </button>
+              )}
+              {isDateRangeActive && (
+                <button
+                  type="button"
+                  className="btn-clear-date-range"
+                  onClick={handleClearDateRange}
+                  title="Reset date range"
+                >
+                  <RotateCcw size={12} />
+                  <span>Reset</span>
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="date-range-controls-grid">
@@ -119,7 +154,7 @@ export default function FilterPanel({
               <label className="date-field-label">Date Column:</label>
               <select
                 className="date-select-input"
-                value={dateRange.column || availableDateCols[0] || ''}
+                value={activeDateCol}
                 onChange={(e) =>
                   onDateRangeChange({
                     ...dateRange,
@@ -136,16 +171,19 @@ export default function FilterPanel({
             </div>
 
             <div className="date-control-field">
-              <label className="date-field-label">Start Date:</label>
+              <label className="date-field-label">
+                Start Date: {dateBounds ? <span className="date-hint">min: {dateBounds.minDateStr}</span> : null}
+              </label>
               <div className="date-input-wrapper">
                 <input
                   type="date"
                   className={`date-picker-input ${dateRange.startDate ? 'has-date' : ''}`}
                   value={dateRange.startDate || ''}
+                  max={dateRange.endDate || (dateBounds ? dateBounds.maxDateStr : undefined)}
                   onChange={(e) =>
                     onDateRangeChange({
                       ...dateRange,
-                      column: dateRange.column || availableDateCols[0] || '',
+                      column: activeDateCol,
                       startDate: e.target.value
                     })
                   }
@@ -169,17 +207,19 @@ export default function FilterPanel({
             </div>
 
             <div className="date-control-field">
-              <label className="date-field-label">End Date:</label>
+              <label className="date-field-label">
+                End Date: {dateBounds ? <span className="date-hint">max: {dateBounds.maxDateStr}</span> : null}
+              </label>
               <div className="date-input-wrapper">
                 <input
                   type="date"
                   className={`date-picker-input ${dateRange.endDate ? 'has-date' : ''}`}
                   value={dateRange.endDate || ''}
-                  min={dateRange.startDate || undefined}
+                  min={dateRange.startDate || (dateBounds ? dateBounds.minDateStr : undefined)}
                   onChange={(e) =>
                     onDateRangeChange({
                       ...dateRange,
-                      column: dateRange.column || availableDateCols[0] || '',
+                      column: activeDateCol,
                       endDate: e.target.value
                     })
                   }

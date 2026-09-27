@@ -41,7 +41,6 @@ export default function App() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [activeView, setActiveView] = useState('table'); // 'table' | 'analytics'
-  const [startdate,set]
 
   // Detect column types for smart filtering & analytics
   const columnTypes = useMemo(() => {
@@ -407,6 +406,7 @@ export default function App() {
               onGlobalSearchChange={handleGlobalSearchChange}
               dateRange={dateRange}
               onDateRangeChange={handleDateRangeChange}
+              data={data}
             />
 
             {/* View Switcher: Table View vs Visual Analytics */}

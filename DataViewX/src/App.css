@@ -695,6 +695,40 @@
   text-transform: uppercase;
 }
 
+.date-range-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-date-preset {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-date-preset:hover {
+  background-color: var(--primary-light);
+  border-color: var(--primary-border);
+}
+
+.date-hint {
+  font-size: 0.7rem;
+  color: var(--primary);
+  font-weight: 500;
+  margin-left: 0.25rem;
+}
+
 .btn-clear-date-range {
   display: inline-flex;
   align-items: center;
