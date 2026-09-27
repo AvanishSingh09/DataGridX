@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Papa from 'papaparse';
 import { Table, AlertCircle, Loader2, Sun, Moon } from 'lucide-react';
 import FileUpload from './components/FileUpload';
@@ -7,6 +7,7 @@ import FilterPanel from './components/FilterPanel';
 import DataTable from './components/DataTable';
 import Pagination from './components/Pagination';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
+import { detectColumnTypes, parseDateValue } from './utils/dataAnalyzer';
 import './App.css';
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
   const [columns, setColumns] = useState([]);
   const [filters, setFilters] = useState({});
   const [globalSearch, setGlobalSearch] = useState('');
+  const [dateRange, setDateRange] = useState({ column: '', startDate: '', endDate: '' });
   const [sortConfig, setSortConfig] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -39,6 +41,12 @@ export default function App() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [activeView, setActiveView] = useState('table'); // 'table' | 'analytics'
+  const [startdate,set]
+
+  // Detect column types for smart filtering & analytics
+  const columnTypes = useMemo(() => {
+    return detectColumnTypes(data, columns);
+  }, [data, columns]);
 
   // Handle uploaded or selected CSV file
   const handleFile = (file) => {
@@ -75,11 +83,20 @@ export default function App() {
           return;
         }
 
+        const detectedTypes = detectColumnTypes(results.data, detectedColumns);
+        const firstDateCol =
+          detectedColumns.find(
+            (col) =>
+              detectedTypes[col] === 'date' ||
+              /date|time|created|updated|enrolled|dob|joined|timestamp/i.test(col)
+          ) || detectedColumns[0] || '';
+
         setData(results.data);
         setColumns(detectedColumns);
         setFileName(file.name);
         setFilters({});
         setGlobalSearch('');
+        setDateRange({ column: firstDateCol, startDate: '', endDate: '' });
         setSortConfig(null);
         setCurrentPage(1);
         setActiveView('table');
@@ -107,10 +124,21 @@ export default function App() {
     setCurrentPage(1);
   };
 
-  // Reset all filters
+  // Update date range filter
+  const handleDateRangeChange = (newRange) => {
+    setDateRange(newRange);
+    setCurrentPage(1);
+  };
+
+  // Reset all filters including date range & global search
   const handleClearFilters = () => {
     setFilters({});
     setGlobalSearch('');
+    setDateRange((prev) => ({
+      ...prev,
+      startDate: '',
+      endDate: ''
+    }));
     setCurrentPage(1);
   };
 
@@ -127,10 +155,26 @@ export default function App() {
     });
   };
 
-  // Filter dataset (AND logic across all column filters + global search)
+  // Filter dataset (AND logic across column filters + global search + date range)
   const filteredData = useMemo(() => {
+    const isDateFilterActive = Boolean(
+      dateRange.column && (dateRange.startDate || dateRange.endDate)
+    );
+
+    let startDateObj = null;
+    if (dateRange.startDate) {
+      startDateObj = new Date(dateRange.startDate);
+      startDateObj.setHours(0, 0, 0, 0);
+    }
+
+    let endDateObj = null;
+    if (dateRange.endDate) {
+      endDateObj = new Date(dateRange.endDate);
+      endDateObj.setHours(23, 59, 59, 999);
+    }
+
     return data.filter((row) => {
-      // Check column filters
+      // 1. Check individual column filters
       const matchesColumnFilters = columns.every((column) => {
         const filterVal = filters[column];
         if (!filterVal || filterVal.trim() === '') {
@@ -147,7 +191,7 @@ export default function App() {
 
       if (!matchesColumnFilters) return false;
 
-      // Check global search keyword
+      // 2. Check global search keyword
       if (globalSearch && globalSearch.trim() !== '') {
         const keyword = globalSearch.trim().toLowerCase();
         const matchesGlobal = columns.some((column) => {
@@ -158,9 +202,30 @@ export default function App() {
         if (!matchesGlobal) return false;
       }
 
+      // 3. Check Start Date to End Date Range filter
+      if (isDateFilterActive) {
+        const rawDate = row[dateRange.column];
+        const rowDate = parseDateValue(rawDate);
+
+        // If row date cannot be parsed, exclude it from active date filter range
+        if (!rowDate) {
+          return false;
+        }
+
+        const rowTime = rowDate.getTime();
+
+        if (startDateObj && rowTime < startDateObj.getTime()) {
+          return false;
+        }
+
+        if (endDateObj && rowTime > endDateObj.getTime()) {
+          return false;
+        }
+      }
+
       return true;
     });
-  }, [data, columns, filters, globalSearch]);
+  }, [data, columns, filters, globalSearch, dateRange]);
 
   // Sort dataset (handles numeric vs string values properly)
   const sortedData = useMemo(() => {
@@ -238,6 +303,7 @@ export default function App() {
     setColumns([]);
     setFilters({});
     setGlobalSearch('');
+    setDateRange({ column: '', startDate: '', endDate: '' });
     setSortConfig(null);
     setCurrentPage(1);
     setFileName('');
@@ -245,9 +311,14 @@ export default function App() {
     setError('');
   };
 
+  const isDateRangeActive = Boolean(
+    dateRange.column && (dateRange.startDate || dateRange.endDate)
+  );
+
   const hasActiveFilters =
     Object.values(filters).some((v) => v && v.trim() !== '') ||
-    (globalSearch && globalSearch.trim() !== '');
+    (globalSearch && globalSearch.trim() !== '') ||
+    isDateRangeActive;
 
   return (
     <div className={`app-container ${darkMode ? 'dark-theme' : ''}`} data-theme={darkMode ? 'dark' : 'light'}>
@@ -328,11 +399,14 @@ export default function App() {
 
             <FilterPanel
               columns={columns}
+              columnTypes={columnTypes}
               filters={filters}
               onFilterChange={handleFilterChange}
               onClearFilters={handleClearFilters}
               globalSearch={globalSearch}
               onGlobalSearchChange={handleGlobalSearchChange}
+              dateRange={dateRange}
+              onDateRangeChange={handleDateRangeChange}
             />
 
             {/* View Switcher: Table View vs Visual Analytics */}

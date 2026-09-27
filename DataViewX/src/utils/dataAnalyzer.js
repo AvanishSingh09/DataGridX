@@ -1,6 +1,54 @@
 /**
- * Utility functions for automatic column type detection and statistical aggregation
+ * Safely parse a value into a Date object, or null if not a valid date
  */
+export function parseDateValue(val) {
+  if (val === undefined || val === null || String(val).trim() === '') {
+    return null;
+  }
+
+  // If already a Date object
+  if (val instanceof Date && !isNaN(val.getTime())) {
+    return val;
+  }
+
+  const str = String(val).trim();
+
+  // Try standard ISO / standard Date string parsing
+  const timestamp = Date.parse(str);
+  if (!isNaN(timestamp)) {
+    const d = new Date(timestamp);
+    // Sanity check for reasonable year range
+    if (d.getFullYear() >= 1900 && d.getFullYear() <= 2100) {
+      return d;
+    }
+  }
+
+  // Handle DD-MM-YYYY or DD/MM/YYYY
+  const dmyMatch = str.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})(.*)$/);
+  if (dmyMatch) {
+    const day = parseInt(dmyMatch[1], 10);
+    const month = parseInt(dmyMatch[2], 10) - 1;
+    const year = parseInt(dmyMatch[3], 10);
+    const date = new Date(year, month, day);
+    if (!isNaN(date.getTime()) && date.getDate() === day) {
+      return date;
+    }
+  }
+
+  // Handle YYYY-MM-DD or YYYY/MM/DD
+  const ymdMatch = str.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})(.*)$/);
+  if (ymdMatch) {
+    const year = parseInt(ymdMatch[1], 10);
+    const month = parseInt(ymdMatch[2], 10) - 1;
+    const day = parseInt(ymdMatch[3], 10);
+    const date = new Date(year, month, day);
+    if (!isNaN(date.getTime()) && date.getDate() === day) {
+      return date;
+    }
+  }
+
+  return null;
+}
 
 /**
  * Detect column data type (numeric, date, or categorical)
@@ -28,27 +76,28 @@ export function detectColumnTypes(data, columns) {
         const str = String(val).trim();
         const num = Number(str);
 
-        // Check if valid number
-        if (!isNaN(num) && str !== '') {
-          numericCount++;
-        }
-        // Check if date-like string (e.g. YYYY-MM-DD or parseable date with hyphen/slash)
-        else if (
-          (str.includes('-') || str.includes('/')) &&
-          !isNaN(Date.parse(str)) &&
+        // Check if date-like first (to avoid pure numeric timestamps or dates matching numbers)
+        const parsedDate = parseDateValue(str);
+        if (
+          parsedDate &&
+          (str.includes('-') || str.includes('/') || str.includes('T') || isNaN(num)) &&
           str.length >= 8
         ) {
           dateCount++;
+        }
+        // Check if valid number
+        else if (!isNaN(num) && str !== '') {
+          numericCount++;
         }
       }
     });
 
     if (filledCount === 0) {
       types[column] = 'categorical';
+    } else if (dateCount / filledCount >= 0.7) {
+      types[column] = 'date';
     } else if (numericCount / filledCount >= 0.8) {
       types[column] = 'numeric';
-    } else if (dateCount / filledCount >= 0.8) {
-      types[column] = 'date';
     } else {
       types[column] = 'categorical';
     }
