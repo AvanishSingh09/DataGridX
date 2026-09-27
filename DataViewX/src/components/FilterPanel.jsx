@@ -1,45 +1,29 @@
-import { Filter, X, Search, CalendarRange, RotateCcw } from 'lucide-react';
+import { Filter, X, Search, Calendar, RotateCcw } from 'lucide-react';
 
 export default function FilterPanel({
   columns,
   columnTypes = {},
-  filters,
+  filters = {},
   onFilterChange,
+  dateFilters = {},
+  onDateFilterChange,
+  onClearColumnDateFilter,
   onClearFilters,
-  globalSearch,
-  onGlobalSearchChange,
-  dateRange = { column: '', startDate: '', endDate: '' },
-  onDateRangeChange
+  globalSearch = '',
+  onGlobalSearchChange
 }) {
-  // Find detected date columns
-  const dateColumns = columns.filter(
-    (col) =>
-      columnTypes[col] === 'date' ||
-      /date|time|created|updated|enrolled|dob|joined|timestamp/i.test(col)
-  );
+  const activeTextFiltersCount = Object.values(filters).filter(
+    (val) => val && val.trim() !== ''
+  ).length;
 
-  // Fallback to all columns if no date column explicitly detected
-  const availableDateCols = dateColumns.length > 0 ? dateColumns : columns;
-  const activeDateCol = dateRange.column || availableDateCols[0] || '';
-
-  const isDateRangeActive = Boolean(
-    dateRange.column && (dateRange.startDate || dateRange.endDate)
-  );
+  const activeDateFiltersCount = Object.values(dateFilters).filter(
+    (df) => df && (df.start || df.end)
+  ).length;
 
   const activeCount =
-    Object.values(filters).filter((val) => val && val.trim() !== '').length +
-    (globalSearch && globalSearch.trim() !== '' ? 1 : 0) +
-    (isDateRangeActive ? 1 : 0);
-
-  const handleClearDateRange = () => {
-    if (onDateRangeChange) {
-      onDateRangeChange({
-        ...dateRange,
-        startDate: '',
-        endDate: ''
-      });
-    }
-  };
+    activeTextFiltersCount +
+    activeDateFiltersCount +
+    (globalSearch && globalSearch.trim() !== '' ? 1 : 0);
 
   return (
     <div className="filter-panel-card">
@@ -91,161 +75,122 @@ export default function FilterPanel({
         </div>
       </div>
 
-      {/* Date Range Filter Section */}
-      {availableDateCols.length > 0 && onDateRangeChange && (
-        <div className={`date-range-filter-box ${isDateRangeActive ? 'active-range' : ''}`}>
-          <div className="date-range-header">
-            <div className="date-range-title">
-              <CalendarRange size={16} className="date-icon" />
-              <span>Date Range Filter</span>
-              {isDateRangeActive && (
-                <span className="date-active-pill">Active</span>
-              )}
-            </div>
+      {/* Main Column Filters Grid */}
+      <div className="column-filters-grid">
+        {columns.map((column) => {
+          const isDateCol =
+            columnTypes[column] === 'date' ||
+            /date|time|created|updated|enrolled|dob|joined|timestamp/i.test(column);
 
-            {isDateRangeActive && (
-              <button
-                type="button"
-                className="btn-clear-date-range"
-                onClick={handleClearDateRange}
-                title="Reset date range"
-              >
-                <RotateCcw size={12} />
-                <span>Reset Dates</span>
-              </button>
-            )}
-          </div>
+          if (isDateCol) {
+            const range = dateFilters[column] || { start: '', end: '' };
+            const isColDateActive = Boolean(range.start || range.end);
 
-          <div className="date-range-controls-grid">
-            <div className="date-control-field">
-              <label className="date-field-label">Date Column:</label>
-              <select
-                className="date-select-input"
-                value={activeDateCol}
-                onChange={(e) =>
-                  onDateRangeChange({
-                    ...dateRange,
-                    column: e.target.value
-                  })
-                }
-              >
-                {availableDateCols.map((col) => (
-                  <option key={col} value={col}>
-                    {col} {columnTypes[col] === 'date' ? '(Date)' : ''}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="date-control-field">
-              <label className="date-field-label">Start Date:</label>
-              <div className="date-input-wrapper">
-                <input
-                  type="date"
-                  className={`date-picker-input ${dateRange.startDate ? 'has-date' : ''}`}
-                  value={dateRange.startDate || ''}
-                  max={dateRange.endDate || undefined}
-                  onChange={(e) =>
-                    onDateRangeChange({
-                      ...dateRange,
-                      column: activeDateCol,
-                      startDate: e.target.value
-                    })
-                  }
-                />
-                {dateRange.startDate && (
-                  <button
-                    type="button"
-                    className="btn-clear-date-input"
-                    onClick={() =>
-                      onDateRangeChange({
-                        ...dateRange,
-                        startDate: ''
-                      })
-                    }
-                    title="Clear start date"
-                  >
-                    <X size={13} />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className="date-control-field">
-              <label className="date-field-label">End Date:</label>
-              <div className="date-input-wrapper">
-                <input
-                  type="date"
-                  className={`date-picker-input ${dateRange.endDate ? 'has-date' : ''}`}
-                  value={dateRange.endDate || ''}
-                  min={dateRange.startDate || undefined}
-                  onChange={(e) =>
-                    onDateRangeChange({
-                      ...dateRange,
-                      column: activeDateCol,
-                      endDate: e.target.value
-                    })
-                  }
-                />
-                {dateRange.endDate && (
-                  <button
-                    type="button"
-                    className="btn-clear-date-input"
-                    onClick={() =>
-                      onDateRangeChange({
-                        ...dateRange,
-                        endDate: ''
-                      })
-                    }
-                    title="Clear end date"
-                  >
-                    <X size={13} />
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Individual column filter inputs */}
-      <div className="column-filters-container">
-        <div className="column-filters-header">
-          <span className="column-filters-title">Column Substring Filters:</span>
-        </div>
-        <div className="column-filters-grid">
-          {columns.map((column) => {
-            const val = filters[column] || '';
-            const isDateCol = columnTypes[column] === 'date';
             return (
-              <div key={column} className="filter-field">
-                <label htmlFor={`filter-${column}`} className="filter-label" title={column}>
-                  {column} {isDateCol && <span className="col-type-tag">Date</span>}
-                </label>
-                <div className="filter-input-wrapper">
-                  <input
-                    id={`filter-${column}`}
-                    type="text"
-                    className={`filter-input ${val ? 'has-value' : ''}`}
-                    placeholder={`Filter ${column}...`}
-                    value={val}
-                    onChange={(e) => onFilterChange(column, e.target.value)}
-                  />
-                  {val && (
+              <div key={column} className={`filter-field filter-field-date ${isColDateActive ? 'has-active-date' : ''}`}>
+                <div className="filter-label-group">
+                  <label className="filter-label" title={column}>
+                    <Calendar size={13} className="date-label-icon" />
+                    <span>{column}</span>
+                    <span className="col-type-tag">Date</span>
+                  </label>
+                  {isColDateActive && (
                     <button
                       type="button"
-                      className="btn-clear-input"
-                      onClick={() => onFilterChange(column, '')}
-                      title={`Clear ${column} filter`}
+                      className="btn-clear-col-date"
+                      onClick={() => onClearColumnDateFilter(column)}
+                      title={`Clear date filter for ${column}`}
                     >
-                      <X size={14} />
+                      <RotateCcw size={11} />
+                      <span>Reset</span>
                     </button>
                   )}
                 </div>
+
+                {/* Inline Start & End Date Inputs */}
+                <div className="inline-date-range-grid">
+                  <div className="inline-date-item">
+                    <span className="inline-date-prefix">From:</span>
+                    <div className="filter-input-wrapper">
+                      <input
+                        type="date"
+                        className={`filter-input inline-date-input ${range.start ? 'has-value' : ''}`}
+                        value={range.start || ''}
+                        max={range.end || undefined}
+                        onChange={(e) => onDateFilterChange(column, 'start', e.target.value)}
+                        title={`Start date for ${column}`}
+                      />
+                      {range.start && (
+                        <button
+                          type="button"
+                          className="btn-clear-input"
+                          onClick={() => onDateFilterChange(column, 'start', '')}
+                          title="Clear start date"
+                        >
+                          <X size={13} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="inline-date-item">
+                    <span className="inline-date-prefix">To:</span>
+                    <div className="filter-input-wrapper">
+                      <input
+                        type="date"
+                        className={`filter-input inline-date-input ${range.end ? 'has-value' : ''}`}
+                        value={range.end || ''}
+                        min={range.start || undefined}
+                        onChange={(e) => onDateFilterChange(column, 'end', e.target.value)}
+                        title={`End date for ${column}`}
+                      />
+                      {range.end && (
+                        <button
+                          type="button"
+                          className="btn-clear-input"
+                          onClick={() => onDateFilterChange(column, 'end', '')}
+                          title="Clear end date"
+                        >
+                          <X size={13} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             );
-          })}
-        </div>
+          }
+
+          // Standard non-date column filter
+          const val = filters[column] || '';
+          return (
+            <div key={column} className="filter-field">
+              <label htmlFor={`filter-${column}`} className="filter-label" title={column}>
+                {column}
+              </label>
+              <div className="filter-input-wrapper">
+                <input
+                  id={`filter-${column}`}
+                  type="text"
+                  className={`filter-input ${val ? 'has-value' : ''}`}
+                  placeholder={`Filter ${column}...`}
+                  value={val}
+                  onChange={(e) => onFilterChange(column, e.target.value)}
+                />
+                {val && (
+                  <button
+                    type="button"
+                    className="btn-clear-input"
+                    onClick={() => onFilterChange(column, '')}
+                    title={`Clear ${column} filter`}
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

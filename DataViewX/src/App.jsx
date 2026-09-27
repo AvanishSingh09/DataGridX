@@ -33,7 +33,7 @@ export default function App() {
   const [columns, setColumns] = useState([]);
   const [filters, setFilters] = useState({});
   const [globalSearch, setGlobalSearch] = useState('');
-  const [dateRange, setDateRange] = useState({ column: '', startDate: '', endDate: '' });
+  const [dateFilters, setDateFilters] = useState({});
   const [sortConfig, setSortConfig] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -82,20 +82,12 @@ export default function App() {
           return;
         }
 
-        const detectedTypes = detectColumnTypes(results.data, detectedColumns);
-        const firstDateCol =
-          detectedColumns.find(
-            (col) =>
-              detectedTypes[col] === 'date' ||
-              /date|time|created|updated|enrolled|dob|joined|timestamp/i.test(col)
-          ) || detectedColumns[0] || '';
-
         setData(results.data);
         setColumns(detectedColumns);
         setFileName(file.name);
         setFilters({});
         setGlobalSearch('');
-        setDateRange({ column: firstDateCol, startDate: '', endDate: '' });
+        setDateFilters({});
         setSortConfig(null);
         setCurrentPage(1);
         setActiveView('table');
@@ -108,7 +100,7 @@ export default function App() {
     });
   };
 
-  // Update specific column filter
+  // Update specific text column filter
   const handleFilterChange = (column, value) => {
     setFilters((prev) => ({
       ...prev,
@@ -123,21 +115,33 @@ export default function App() {
     setCurrentPage(1);
   };
 
-  // Update date range filter
-  const handleDateRangeChange = (newRange) => {
-    setDateRange(newRange);
+  // Update date filter for a specific date column (start or end date)
+  const handleDateFilterChange = (column, field, value) => {
+    setDateFilters((prev) => ({
+      ...prev,
+      [column]: {
+        ...(prev[column] || {}),
+        [field]: value
+      }
+    }));
     setCurrentPage(1);
   };
 
-  // Reset all filters including date range & global search
+  // Clear date filter for a specific column
+  const handleClearColumnDateFilter = (column) => {
+    setDateFilters((prev) => {
+      const next = { ...prev };
+      delete next[column];
+      return next;
+    });
+    setCurrentPage(1);
+  };
+
+  // Reset all filters including all date filters & global search
   const handleClearFilters = () => {
     setFilters({});
     setGlobalSearch('');
-    setDateRange((prev) => ({
-      ...prev,
-      startDate: '',
-      endDate: ''
-    }));
+    setDateFilters({});
     setCurrentPage(1);
   };
 
@@ -154,26 +158,10 @@ export default function App() {
     });
   };
 
-  // Filter dataset (AND logic across column filters + global search + date range)
+  // Filter dataset (AND logic across column filters + global search + per-column date filters)
   const filteredData = useMemo(() => {
-    const isDateFilterActive = Boolean(
-      dateRange.column && (dateRange.startDate || dateRange.endDate)
-    );
-
-    let startDateObj = null;
-    if (dateRange.startDate) {
-      startDateObj = new Date(dateRange.startDate);
-      startDateObj.setHours(0, 0, 0, 0);
-    }
-
-    let endDateObj = null;
-    if (dateRange.endDate) {
-      endDateObj = new Date(dateRange.endDate);
-      endDateObj.setHours(23, 59, 59, 999);
-    }
-
     return data.filter((row) => {
-      // 1. Check individual column filters
+      // 1. Check individual column text filters
       const matchesColumnFilters = columns.every((column) => {
         const filterVal = filters[column];
         if (!filterVal || filterVal.trim() === '') {
@@ -201,30 +189,40 @@ export default function App() {
         if (!matchesGlobal) return false;
       }
 
-      // 3. Check Start Date to End Date Range filter
-      if (isDateFilterActive) {
-        const rawDate = row[dateRange.column];
-        const rowDate = parseDateValue(rawDate);
+      // 3. Check per-column Start Date to End Date Range filters
+      for (const [column, range] of Object.entries(dateFilters)) {
+        if (range && (range.start || range.end)) {
+          const rawDate = row[column];
+          const rowDate = parseDateValue(rawDate);
 
-        // If row date cannot be parsed, exclude it from active date filter range
-        if (!rowDate) {
-          return false;
-        }
+          // If row date cannot be parsed, exclude it from active date filter range
+          if (!rowDate) {
+            return false;
+          }
 
-        const rowTime = rowDate.getTime();
+          const rowTime = rowDate.getTime();
 
-        if (startDateObj && rowTime < startDateObj.getTime()) {
-          return false;
-        }
+          if (range.start) {
+            const startDateObj = new Date(range.start);
+            startDateObj.setHours(0, 0, 0, 0);
+            if (rowTime < startDateObj.getTime()) {
+              return false;
+            }
+          }
 
-        if (endDateObj && rowTime > endDateObj.getTime()) {
-          return false;
+          if (range.end) {
+            const endDateObj = new Date(range.end);
+            endDateObj.setHours(23, 59, 59, 999);
+            if (rowTime > endDateObj.getTime()) {
+              return false;
+            }
+          }
         }
       }
 
       return true;
     });
-  }, [data, columns, filters, globalSearch, dateRange]);
+  }, [data, columns, filters, globalSearch, dateFilters]);
 
   // Sort dataset (handles numeric vs string values properly)
   const sortedData = useMemo(() => {
@@ -302,7 +300,7 @@ export default function App() {
     setColumns([]);
     setFilters({});
     setGlobalSearch('');
-    setDateRange({ column: '', startDate: '', endDate: '' });
+    setDateFilters({});
     setSortConfig(null);
     setCurrentPage(1);
     setFileName('');
@@ -310,14 +308,14 @@ export default function App() {
     setError('');
   };
 
-  const isDateRangeActive = Boolean(
-    dateRange.column && (dateRange.startDate || dateRange.endDate)
+  const hasActiveDateFilters = Object.values(dateFilters).some(
+    (df) => df && (df.start || df.end)
   );
 
   const hasActiveFilters =
     Object.values(filters).some((v) => v && v.trim() !== '') ||
     (globalSearch && globalSearch.trim() !== '') ||
-    isDateRangeActive;
+    hasActiveDateFilters;
 
   return (
     <div className={`app-container ${darkMode ? 'dark-theme' : ''}`} data-theme={darkMode ? 'dark' : 'light'}>
@@ -401,12 +399,12 @@ export default function App() {
               columnTypes={columnTypes}
               filters={filters}
               onFilterChange={handleFilterChange}
+              dateFilters={dateFilters}
+              onDateFilterChange={handleDateFilterChange}
+              onClearColumnDateFilter={handleClearColumnDateFilter}
               onClearFilters={handleClearFilters}
               globalSearch={globalSearch}
               onGlobalSearchChange={handleGlobalSearchChange}
-              dateRange={dateRange}
-              onDateRangeChange={handleDateRangeChange}
-              data={data}
             />
 
             {/* View Switcher: Table View vs Visual Analytics */}
